@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from beanie import Document, Link
-from Models.products import Product
+from Models.product import Product
 from typing import Optional
 
 
