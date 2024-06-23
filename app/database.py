@@ -17,7 +17,6 @@ async def init_db():
     # Load the MongoDB connection string from the environment variable MONGODB_URI
 
     CONNECTION_STRING = os.getenv('DB_URL')
-    print(CONNECTION_STRING)
 
     # Create a MongoDB client
     client = AsyncIOMotorClient(CONNECTION_STRING, tlsCAFile=certifi.where())

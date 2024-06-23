@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from app.database import init_db
 import routers.pharmacy 
-import routers.products
-import routers.users
+import routers.product
+import routers.user
 
 
 
