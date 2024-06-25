@@ -8,10 +8,11 @@ from typing import Optional
 class Localisation(BaseModel):
     longitude: float
     latitude: float
-    
 class ProductsInPharmacy(BaseModel):
-    produit: Link[Product]
+    product: Link[Product]
     price: float
+       
+
 
 
 class Pharmacy(Document):
@@ -20,6 +21,8 @@ class Pharmacy(Document):
     phone: float
     localisation: Localisation
     products: list[ProductsInPharmacy]= []
+    
+    
     
     class Settings:
         name = "pharmacies"
