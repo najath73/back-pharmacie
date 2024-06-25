@@ -9,7 +9,7 @@ class Localisation(BaseModel):
     longitude: float
     latitude: float
     
-class ProductInPharmacie(BaseModel):
+class ProductsInPharmacy(BaseModel):
     produit: Link[Product]
     price: float
 
@@ -19,12 +19,12 @@ class Pharmacy(Document):
     adress: str 
     phone: float
     localisation: Localisation
-    products: list[ProductInPharmacie]= []
+    products: list[ProductsInPharmacy]= []
     
     class Settings:
         name = "pharmacies"
    
-class UpdatePharmacie(BaseModel):
+class UpdatePharmacy(BaseModel):
     name: Optional [str]
     adress: Optional [str]
     phone: Optional [str]

@@ -23,9 +23,9 @@ async def get_product_by_id(product_id: str) -> Product :
    product= await Product.get(product_id)
    return product
 
-#update product by id
-@router.patch("/{product_id}")
-async def update_product_by_id(product_id: str , payload: UpdateProduct):
+#update product 
+@router.patch("/{product_id}", status_code=200)
+async def update_product(product_id: str , payload: UpdateProduct):
    product= await Product.get(product_id)
    if (payload.name):
       product.name=payload.name
@@ -37,10 +37,10 @@ async def update_product_by_id(product_id: str , payload: UpdateProduct):
       product.description=payload.description
       
    await product.save()
-   return product
-#delete product by id
+   return 
+#delete product 
 @router.delete("/{product_id}")
-async def delete_product_by_id(product_id: str):
+async def delete_product(product_id: str):
    product= await Product.get(product_id)
    await product.delete()
-   return ("Produit supprimer avec succes")
+   return {"message":"Produit supprimer avec succes"}
