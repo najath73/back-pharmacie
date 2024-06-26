@@ -14,3 +14,4 @@ class Product(Document):
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
+

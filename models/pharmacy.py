@@ -3,11 +3,6 @@ from beanie import Document, Link
 from pydantic import BaseModel, Field
 from models.product import Product
 
-        
-class ProductInPharmacy(BaseModel):
-    product: Link[Product]
-    price: float
-    quantity: int
 
 
 class Localisation(BaseModel):
@@ -19,7 +14,7 @@ class Pharmacy(Document):
     address: str
     phone: str
     localisation: Localisation
-    products: List[ProductInPharmacy] = []
+    #products: List[ProductInPharmacy] = []
 
     class Settings:
         # The name of the collection to store these objects.
@@ -34,29 +29,17 @@ class Pharmacy(Document):
                 "localisation": {
                     "longitude": 120.23,
                     "latitude": -134.7
-                },
-                "products": [
-                    {
-                        "product": {
-                            'id': "2345678UHT5456789",
-                            "collection": "product"
-                        },
-                        "price": 12.8,
-                        "quantity": 25
-
-                    },
-                    {
-                        "product": {
-                            'id': "2345678UHTghjk456789",
-                            "collection": "product"
-                        },
-                        "price": 14.7
-
-                    }
-                ]
+                }
             }
         }
         
+
+class ProductInPharmacy(Document):
+    product: Link[Product]
+    pharmacy: Link[Pharmacy]
+    price: float
+    quantity: int
+
 
 class PharmacyUpdated(BaseModel):
     name: Optional[str]
@@ -65,3 +48,10 @@ class PharmacyUpdated(BaseModel):
     localisation: Optional[Localisation]
 
 
+class ProductInPharmacyAdd(BaseModel):
+    price: float
+    quantity: int
+
+class ProductInPharmacyUpdate(BaseModel):
+    price: Optional[float]
+    quantity: Optional[int]

@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Set
+from beanie import Link, WriteRules
 from fastapi import APIRouter, HTTPException, status
-from models.pharmacy import Pharmacy, PharmacyUpdated
+from models.pharmacy import Pharmacy, PharmacyUpdated, ProductInPharmacyAdd, ProductInPharmacyUpdate, ProductInPharmacy
 from models.product import Product
 
 
@@ -59,3 +60,49 @@ async def update_pharmacy(pharmacy_id: str, payload: PharmacyUpdated):
 async def delete_pharmacy(pharmacy_id: str):
    pharmacy = await Pharmacy.get(pharmacy_id)
    return {"message": "Pharmacy deleted successfully"}
+
+async def check_product_and_pharmacy(pharmacy_id, product_id):
+    pharmacy = await Pharmacy.get(pharmacy_id)
+    if not pharmacy:
+       raise HTTPException(status_code=404, detail="Pharmacy not found")
+
+    product = await Product.get(product_id)
+    if not product:
+       raise HTTPException(status_code=404, detail="Product not found")
+    
+@router.post("/{pharmacy_id}/products/{product_id}")
+async def add_product_for_a_pharmacy(pharmacy_id: str,product_id: str, payload: ProductInPharmacyAdd):
+
+   await check_product_and_pharmacy(pharmacy_id, product_id)
+
+   # Ajouter le produit à la liste des produits de la pharmacie
+   productInpharmacy=  ProductInPharmacy(product=product_id, price=payload.price, quantity=payload.quantity, pharmacy=pharmacy_id)
+   await productInpharmacy.create()
+   return 
+
+
+
+@router.patch("/{pharmacy_id}/products/{product_id}", status_code=204)
+async def update_product_for_pharmacy(pharmacy_id: str, product_id: str, payload: ProductInPharmacyUpdate):
+
+   await check_product_and_pharmacy(pharmacy_id, product_id)
+   
+   productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.ref.id == pharmacy_id, ProductInPharmacy.product.ref.id == product_id)
+   if(payload.quantity):
+      productInPharmacy.quantity = payload.quantity
+   if(payload.price):
+      productInPharmacy.price = payload.price
+   
+   productInPharmacy.save()
+   return 
+
+@router.delete("/{pharmacy_id}/products/{product_id}", status_code=204)
+async def delete_product_for_pharmacy(pharmacy_id: str, product_id: str):
+
+   await check_product_and_pharmacy(pharmacy_id, product_id)
+   
+   productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.ref.id == pharmacy_id, ProductInPharmacy.product.ref.id == product_id)
+   
+   productInPharmacy.delete()
+   return 
+
