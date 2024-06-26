@@ -25,33 +25,33 @@ async def get_pharmacy_by_id(pharmacy_id: str) ->Pharmacy:
 #Update pharmacy
 @router.patch("/{pharmacy_id}")
 async def update_pharmacy(pharmacy_id: str , payload: UpdatePharmacy):
-   pharmacy= await Pharmacy.get(pharmacy_id)
+   pharmacy_updated= await Pharmacy.get(pharmacy_id)
    if (payload.name):
-       pharmacy.name= payload.name
+       pharmacy_updated.name= payload.name
        
        
    if (payload.adress):
-       pharmacy.adress= payload.adress
+       pharmacy_updated.adress= payload.adress
        
    if (payload.phone):
-       pharmacy.phone= payload.phone
+       pharmacy_updated.phone= payload.phone
        
    if (payload.localisation):
-       pharmacy.localisation= payload.localisation
+       pharmacy_updated.localisation= payload.localisation
     
    if (payload.products):
-       pharmacy.products = payload.products
+       pharmacy_updated.products = payload.products
        
 
       
-   await pharmacy.save()
+   await pharmacy_updated.save()
    return 
 
 #delete pharmacy 
 @router.delete("/{pharmacy_id}")
 async def delete_pharmacy(pharmacy_id: str):
-   pharmacy= await Pharmacy.get(pharmacy_id)
-   await pharmacy.delete()
+   pharmacy_deleted= await Pharmacy.get(pharmacy_id)
+   await pharmacy_deleted.delete()
    return {"message":"Pharmacy deleted successfully"}
     
     

@@ -9,7 +9,7 @@ class User(Document):
     firstname: str
     email: str
     password: str
-    
+    role: str
 
     class Settings:
         name = "utilisateur"
