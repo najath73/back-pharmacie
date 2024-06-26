@@ -1,5 +1,6 @@
 from typing import List, Set
 from beanie import Link, WriteRules
+from bson import ObjectId
 from fastapi import APIRouter, HTTPException, status
 from models.pharmacy import Pharmacy, PharmacyUpdated, ProductInPharmacyAdd, ProductInPharmacyUpdate, ProductInPharmacy
 from models.product import Product
@@ -69,14 +70,15 @@ async def check_product_and_pharmacy(pharmacy_id, product_id):
     product = await Product.get(product_id)
     if not product:
        raise HTTPException(status_code=404, detail="Product not found")
+    return (pharmacy, product)
     
 @router.post("/{pharmacy_id}/products/{product_id}")
 async def add_product_for_a_pharmacy(pharmacy_id: str,product_id: str, payload: ProductInPharmacyAdd):
 
-   await check_product_and_pharmacy(pharmacy_id, product_id)
+   phamacyProduct =await check_product_and_pharmacy(pharmacy_id, product_id)
 
    # Ajouter le produit à la liste des produits de la pharmacie
-   productInpharmacy=  ProductInPharmacy(product=product_id, price=payload.price, quantity=payload.quantity, pharmacy=pharmacy_id)
+   productInpharmacy=  ProductInPharmacy(product=phamacyProduct[1], price=payload.price, quantity=payload.quantity, pharmacy=phamacyProduct[0])
    await productInpharmacy.create()
    return 
 
@@ -85,15 +87,15 @@ async def add_product_for_a_pharmacy(pharmacy_id: str,product_id: str, payload: 
 @router.patch("/{pharmacy_id}/products/{product_id}", status_code=204)
 async def update_product_for_pharmacy(pharmacy_id: str, product_id: str, payload: ProductInPharmacyUpdate):
 
-   await check_product_and_pharmacy(pharmacy_id, product_id)
+   phamacyProduct= await check_product_and_pharmacy(pharmacy_id, product_id)
    
-   productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.ref.id == pharmacy_id, ProductInPharmacy.product.ref.id == product_id)
+   productInPharmacy =  await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), ProductInPharmacy.product.id == ObjectId(product_id))
    if(payload.quantity):
       productInPharmacy.quantity = payload.quantity
    if(payload.price):
       productInPharmacy.price = payload.price
    
-   productInPharmacy.save()
+   await productInPharmacy.save()
    return 
 
 @router.delete("/{pharmacy_id}/products/{product_id}", status_code=204)
@@ -101,8 +103,8 @@ async def delete_product_for_pharmacy(pharmacy_id: str, product_id: str):
 
    await check_product_and_pharmacy(pharmacy_id, product_id)
    
-   productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.ref.id == pharmacy_id, ProductInPharmacy.product.ref.id == product_id)
+   productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), ProductInPharmacy.product.id == ObjectId(product_id))
    
-   productInPharmacy.delete()
+   await productInPharmacy.delete()
    return 
 
