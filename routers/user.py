@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter
 
 from models.user import User, UserUpdate
@@ -11,8 +12,8 @@ router = APIRouter(prefix="/user")
 
 
 #Get all users
-@router.get("",status_code=200,response_model=list)
-async def get_all_user():
+@router.get("",status_code=200)
+async def get_all_user() -> List [User]:
    users= await User.find_all().to_list()
    return users
 
@@ -31,7 +32,7 @@ async def get_user_by_id(user_id: str):
    return user
 
 #update user
-@router.patch("/{user_id}",)
+@router.patch("/{user_id}", status_code=204)
 async def update_user(user_id: str,payload: UserUpdate):
    user_updated= await User.get(user_id)
    
@@ -44,7 +45,7 @@ async def update_user(user_id: str,payload: UserUpdate):
    return{"message": "user updated successefuly"}
 
 #user delete
-@router.delete("/{user_id}")
+@router.delete("/{user_id}", status_code=204)
 async def delete_user(user_id: str):
    user_deleted= await User.get(user_id)
    await user_deleted.delete()
