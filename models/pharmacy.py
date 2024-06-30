@@ -19,15 +19,6 @@ class Pharmacy(Document):
     phone: float
     localisation: Localisation
    
-    
-class ProductsInPharmacy(Document):
-    product: Link[Product]
-    price: float
-    quantity: int
-    pharmacy: Link[Pharmacy]  
-    
-    
-    
     class Settings:
         name = "pharmacies"
    
@@ -37,6 +28,22 @@ class UpdatePharmacy(BaseModel):
     phone: Optional [str]
     Localisation: Optional [str]
     products: Optional [str]
+    
+class ProductsInPharmacy(Document):
+    product: Link[Product]
+    price: float
+    quantity: int
+    pharmacy: Link[Pharmacy]  
+
+class ProductInPharmacyAdd(BaseModel):
+    price: float
+    quantity: int
+
+class ProductInPharmacypdate(BaseModel):
+    price:float
+    quantity: int
+
+    
 
 
 

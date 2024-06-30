@@ -50,5 +50,5 @@ async def update_product(product_id: str , payload: UpdateProduct):
 async def delete_product(product_id: str):
    product_deleted= await Product.get(product_id)
    await product_deleted.delete()
-   return {"message":"Product deleted successfully"}
+   return 
 
