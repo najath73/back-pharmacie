@@ -14,7 +14,6 @@ class Pharmacy(Document):
     address: str
     phone: str
     localisation: Localisation
-    #products: List[ProductInPharmacy] = []
 
     class Settings:
         # The name of the collection to store these objects.
