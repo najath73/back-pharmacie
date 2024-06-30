@@ -1,10 +1,23 @@
-from datetime import datetime
+
+from typing import Optional
 from beanie import Document
+
 
 class User(Document):
     username: str
+    name: str
+    firstname: str
     email: str
     password: str
-    firstname: str
-    lastname: str
-    created_at: datetime = datetime.now()
+    role: str
+
+    class Settings:
+        name = "utilisateur"
+        
+
+class UserUpdate(Document):
+    username: Optional[str] 
+    password:Optional [str]
+
+
+role = ["admin sys", "admin pharmacie", "pharmacie user", "user simple"]

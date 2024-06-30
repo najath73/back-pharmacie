@@ -7,7 +7,7 @@ from models.product import Product
 
 
 
-router = APIRouter(prefix="/pharmacy", tags=["Pharmacy"])
+router = APIRouter(prefix="/pharmacies", tags=["Pharmacies"])
 
 
 
@@ -54,31 +54,35 @@ async def update_pharmacy(pharmacy_id: str, payload: PharmacyUpdated):
    if(payload.localisation):
       pharmacy.localisation = payload.localisation
       await pharmacy.save()
-   return {"message": "Pharmacy updated successfuly"}
+   return 
 
 #delete pharmacy by id
 @router.delete("/{pharmacy_id}", status_code=204)
 async def delete_pharmacy(pharmacy_id: str):
    pharmacy = await Pharmacy.get(pharmacy_id)
-   return {"message": "Pharmacy deleted successfully"}
+   return 
 
+# Fonction permettant de faire la verification du produit et de la pharmacie
 async def check_product_and_pharmacy(pharmacy_id, product_id):
-    pharmacy = await Pharmacy.get(pharmacy_id)
-    if not pharmacy:
-       raise HTTPException(status_code=404, detail="Pharmacy not found")
-
-    product = await Product.get(product_id)
-    if not product:
-       raise HTTPException(status_code=404, detail="Product not found")
-    return (pharmacy, product)
+    
+   # Get pharmacy
+   pharmacy = await Pharmacy.get(pharmacy_id)
+   if not pharmacy:
+      raise HTTPException(status_code=404, detail="Pharmacy not found")
+   # Get produtct 
+   product = await Product.get(product_id)
+   if not product:
+      raise HTTPException(status_code=404, detail="Product not found")
+   return 
     
 @router.post("/{pharmacy_id}/products/{product_id}")
 async def add_product_for_a_pharmacy(pharmacy_id: str,product_id: str, payload: ProductInPharmacyAdd):
 
-   phamacyProduct =await check_product_and_pharmacy(pharmacy_id, product_id)
+   await check_product_and_pharmacy(pharmacy_id, product_id) #permet de verrifier si la pharmacie et le produit existe déjà
 
-   # Ajouter le produit à la liste des produits de la pharmacie
+   # Construction de l'object ProductInPharmacy à partir des information connu: phramacy_id, product_id, price et quantity
    productInpharmacy=  ProductInPharmacy(product=product_id, pharmacy=pharmacy_id, price=payload.price, quantity=payload.quantity)
+   # Ajouter le produit à la liste des produits de la pharmacie
    await productInpharmacy.create()
    return 
 
@@ -87,24 +91,29 @@ async def add_product_for_a_pharmacy(pharmacy_id: str,product_id: str, payload: 
 @router.patch("/{pharmacy_id}/products/{product_id}", status_code=204)
 async def update_product_for_pharmacy(pharmacy_id: str, product_id: str, payload: ProductInPharmacyUpdate):
 
-   await check_product_and_pharmacy(pharmacy_id, product_id)
+   await check_product_and_pharmacy(pharmacy_id, product_id) #permet de verrifier si la pharmacie et le produit existe déjà
    
+   # Recuperer dans les info dans la table ProductInPharmacy par rapport a pharmacy_id et product_id
    productInPharmacy =  await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), ProductInPharmacy.product.id == ObjectId(product_id))
+
+   # Commencé la modification 
    if(payload.quantity):
       productInPharmacy.quantity = payload.quantity
    if(payload.price):
       productInPharmacy.price = payload.price
    
-   await productInPharmacy.save()
+   await productInPharmacy.save() # Enregistrer la modification
    return 
 
 @router.delete("/{pharmacy_id}/products/{product_id}", status_code=204)
 async def delete_product_for_pharmacy(pharmacy_id: str, product_id: str):
 
-   await check_product_and_pharmacy(pharmacy_id, product_id)
-   
+   await check_product_and_pharmacy(pharmacy_id, product_id) #permet de verrifier si la pharmacie et le produit existe déjà
+
+   # Recuperer dans les info dans la document ProductInPharmacy par rapport a pharmacy_id et product_id
    productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), ProductInPharmacy.product.id == ObjectId(product_id))
    
+   # Supprimer l'objet dans le document
    await productInPharmacy.delete()
    return 
 

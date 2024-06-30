@@ -1,36 +1,53 @@
+from typing import List
 from fastapi import APIRouter
 
+from models.user import User, UserUpdate
+
+router = APIRouter(prefix="/user", tags=["Utilisateurs"])
 
 
 
-router = APIRouter(prefix="/user")
+router = APIRouter(prefix="/users", tags=["Users"])
 
-
-users= [
-   {
-       "id": 1,
-       "name": "Donka"
-   },
-   {
-       "id": 1,
-       "name": "Donka"
-   }
-]
 
 
 #Get all users
-@router.get("")
-async def get_user():
+@router.get("",status_code=200)
+async def get_all_user() -> List [User]:
+   users= await User.find_all().to_list()
    return users
 
 
 #post a user
-@router.post("")
-async def post_user(payload: dict):
-   return users
+@router.post("",status_code=201, response_model=dict)
+async def post_user(payload: User):
+   user_created= await payload.create()
+   return {"message": "User added successfully", "id":user_created.id} 
 
 
 #get by id a user
-@router.get("/{user_id}")
-async def post_user(user_id: str):
-   return user_id
+@router.get("/{user_id}",status_code=200)
+async def get_user_by_id(user_id: str):
+   user= await User.get(user_id)
+   return user
+
+#update user
+@router.patch("/{user_id}", status_code=204)
+async def update_user(user_id: str,payload: UserUpdate):
+   user_updated= await User.get(user_id)
+   
+   if(payload.username):
+      user_updated.username= payload.username
+   if(payload.password):
+      user_updated.password= payload.password
+      
+   await user_updated.save()
+   return
+
+#user delete
+@router.delete("/{user_id}", status_code=204)
+async def delete_user(user_id: str):
+   user_deleted= await User.get(user_id)
+   await user_deleted.delete()
+   return
+   

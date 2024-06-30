@@ -27,3 +27,4 @@ app.add_middleware(
 # Ajouter les routers dédiés
 app.include_router(routers.pharmacy.router)
 app.include_router(routers.product.router)
+app.include_router(routers.users.router)
