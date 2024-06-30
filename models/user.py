@@ -1,18 +1,18 @@
 
 from typing import Optional
-from beanie import Document
+from beanie import Document, Indexed
 
 
 class User(Document):
-    username: str
+    username: Indexed(str, unique=True)
     name: str
     firstname: str
-    email: str
+    email: Indexed(str, unique=True)
     password: str
     role: str
 
     class Settings:
-        name = "utilisateur"
+        name = "users"
         
 class UserUpdate(Document):
     username: Optional[str] 

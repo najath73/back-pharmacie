@@ -1,13 +1,10 @@
 from typing import List
-from fastapi import APIRouter
-
+from fastapi import APIRouter, HTTPException
+from pymongo.errors import DuplicateKeyError
 from models.user import User, UserUpdate
 
-router = APIRouter(prefix="/user", tags=["Utilisateurs"])
 
-
-
-router = APIRouter(prefix="/user")
+router = APIRouter(prefix="/user", tags=["Users"])
 
 
 
@@ -21,8 +18,19 @@ async def get_all_user() -> List [User]:
 #post a user
 @router.post("",status_code=201, response_model=dict)
 async def post_user(payload: User):
-   user_created= await payload.create()
-   return {"message": "User added successfully", "id":user_created.id} 
+   try:
+      user_created= await payload.create()
+   except DuplicateKeyError as e:
+        error_details = e.details
+        error_message = error_details.get('errmsg', str(e))
+
+        error_info = {
+            "error_description": "Duplicate entry detected",
+            "error_message": error_message          
+        }
+        raise HTTPException(status_code=400, detail=error_info)
+
+   return {"message": "User added successfully", "id": str(user_created.id)} 
 
 
 #get by id a user

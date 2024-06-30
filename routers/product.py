@@ -16,9 +16,9 @@ async def get_all_products() -> List [Product]:
 @router.post("", status_code=201, response_model=dict)
 async def post_a_product(payload: Product):
     product_added= await payload.create()
-    return {"message": "Product added successfully", "id":product_added.id}
+    return {"message": "Product added successfully", "id": str(product_added.id)}
 
-#Get product by id
+#Get product by idfetch_links=True,
 @router.get("/{product_id}",status_code=200)
 async def get_product_by_id(product_id: str) ->Product:
     product= await Product.get(product_id)
