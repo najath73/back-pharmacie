@@ -78,7 +78,7 @@ async def add_product_for_a_pharmacy(pharmacy_id: str,product_id: str, payload: 
    phamacyProduct =await check_product_and_pharmacy(pharmacy_id, product_id)
 
    # Ajouter le produit à la liste des produits de la pharmacie
-   productInpharmacy=  ProductInPharmacy(product=phamacyProduct[1], price=payload.price, quantity=payload.quantity, pharmacy=phamacyProduct[0])
+   productInpharmacy=  ProductInPharmacy(product=product_id, pharmacy=pharmacy_id, price=payload.price, quantity=payload.quantity)
    await productInpharmacy.create()
    return 
 
@@ -87,7 +87,7 @@ async def add_product_for_a_pharmacy(pharmacy_id: str,product_id: str, payload: 
 @router.patch("/{pharmacy_id}/products/{product_id}", status_code=204)
 async def update_product_for_pharmacy(pharmacy_id: str, product_id: str, payload: ProductInPharmacyUpdate):
 
-   phamacyProduct= await check_product_and_pharmacy(pharmacy_id, product_id)
+   await check_product_and_pharmacy(pharmacy_id, product_id)
    
    productInPharmacy =  await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), ProductInPharmacy.product.id == ObjectId(product_id))
    if(payload.quantity):
