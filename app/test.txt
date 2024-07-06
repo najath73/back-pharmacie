@@ -1,0 +1,202 @@
+Post Pharmacy:OK
+input:
+{
+    "name": "Pharmacie Centrale de Guinée",
+    "address": "Rue KA 005, Conakry, Guinée",
+    "phone": "+224 622 20 20 20",
+    "localisation": {
+      "longitude": -13.6856,
+      "latitude": 9.5370
+    },
+    {
+    "name": "Pharmacie de la Gare",
+    "address": "Corniche Sud, Conakry, Guinée",
+    "phone": "+224 621 00 00 00",
+    "localisation": {
+      "longitude": -13.6928,
+      "latitude": 9.5110
+    }
+  }
+  },
+  {
+    "name": "Pharmacie du Stade",
+    "address": "Boulevard Telly Diallo, Conakry, Guinée",
+    "phone": "+224 624 30 30 30",
+    "localisation": {
+      "longitude": -13.7023,
+      "latitude": 9.5211
+    }
+  }
+  response_body:
+  {
+  "message": "Pharmacy added successfully",
+  "id": "6682f74e6c04fa5776e13d61"
+},
+{
+  "message": "Pharmacy added successfully",
+  "id": "6682f7bc6c04fa5776e13d62"
+},
+{
+  "message": "Pharmacy added successfully",
+  "id": "6682f8056c04fa5776e13d63"
+}
+
+
+Get all Pharmacies:OK
+response_body:
+	
+Response body
+Download
+[
+  {
+    "_id": "5eb7cf5a86d9755df3a6c593",
+    "name": "string",
+    "address": "string",
+    "phone": "string",
+    "localisation": {
+      "longitude": 0.2,
+      "latitude": 0.2
+    }
+  },
+  {
+    "_id": "6682f74e6c04fa5776e13d61",
+    "name": "Pharmacie Centrale de Guinée",
+    "address": "Rue KA 005, Conakry, Guinée",
+    "phone": "+224 622 20 20 20",
+    "localisation": {
+      "longitude": -13.6856,
+      "latitude": 9.537
+    }
+  },
+  {
+    "_id": "6682f7bc6c04fa5776e13d62",
+    "name": "Pharmacie de la Gare",
+    "address": "Corniche Sud, Conakry, Guinée",
+    "phone": "+224 621 00 00 00",
+    "localisation": {
+      "longitude": -13.6928,
+      "latitude": 9.511
+    }
+  },
+  {
+    "_id": "6682f8056c04fa5776e13d63",
+    "name": "Pharmacie du Stade",
+    "address": "Boulevard Telly Diallo, Conakry, Guinée",
+    "phone": "+224 624 30 30 30",
+    "localisation": {
+      "longitude": -13.7023,
+      "latitude": 9.5211
+    }
+  }
+]
+Get Pharmacie by id:OK
+
+input:5eb7cf5a86d9755df3a6c593
+response_body:
+{
+  "_id": "5eb7cf5a86d9755df3a6c593",
+  "name": "string",
+  "address": "string",
+  "phone": "string",
+  "localisation": {
+    "longitude": 0.2,
+    "latitude": 0.2
+  }
+}
+
+Update Pharmacie:OK
+input:5eb7cf5a86d9755df3a6c593
+{
+  "_id": "5eb7cf5a86d9755df3a6c593",
+  "name": "najath",
+  "address": "sonfonia",
+  "phone": "str",
+  "localisation": {
+    "longitude": 0.2,
+    "latitude": 0.2
+  }
+}
+response_headear:
+ access-control-allow-credentials: true 
+ access-control-allow-origin: * 
+ content-type: application/json 
+ date: Mon,01 Jul 2024 18:53:50 GMT 
+ server: uvicorn 
+
+Get by id 
+input:5eb7cf5a86d9755df3a6c593
+response_body:{
+  "_id": "5eb7cf5a86d9755df3a6c593",
+  "name": "najath",
+  "address": "sonfonia",
+  "phone": "str",
+  "localisation": {
+    "longitude": 0.2,
+    "latitude": 0.2
+  }
+}(la pharmacie a ete modifiée)
+
+Delete pharmacie:OK
+input:5eb7cf5a86d9755df3a6c593
+response_body:
+
+
+
+Get all product:OK
+response_body:[
+  {
+    "_id": "667c941e58cb6771d29f471a",
+    "name": "string",
+    "description": "string"
+  },
+  {
+    "_id": "6681d96f341d4ad315232585",
+    "name": "Doliprane 1000 mg",
+    "description": "Antalgique pour soulager les douleurs et la fièvre."
+  },
+  {
+    "_id": "6681d9e3b8b63affc7de1709",
+    "name": "Efferalgan 500 mg",
+    "description": "Paracétamol effervescent pour le soulagement des douleurs légères."
+  },
+  {
+    "_id": "6681da1917e731142f52f0d0",
+    "name": "Nurofen 400 mg",
+    "description": "Anti-inflammatoire pour réduire la douleur et la fièvre."
+  }
+]
+post product:OK
+input:
+{
+    "name": "Metformin",
+    "description": "Oral diabetes medicine that helps control blood sugar levels"
+  }
+  response_body:
+  {
+  "message": "Product added successfully",
+  "id": "6682fe232878d934469ef942"
+}
+Get product by id:OK
+input:667c941e58cb6771d29f471a
+response_body:
+{
+  "_id": "667c941e58cb6771d29f471a",
+  "name": "string",
+  "description": "string"
+}
+Update product: ne marche pas
+input:667c941e58cb6771d29f471a
+{
+  "_id": "667c941e58cb6771d29f471a",
+  "name": "Amoxicillin",
+  "description": "string"
+}
+response_body:
+
+
+Delete product:ok
+input:667c941e58cb6771d29f471a
+response_body
+
+
+
