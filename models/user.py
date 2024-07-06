@@ -1,6 +1,7 @@
 
 from typing import Optional
 from beanie import Document, Indexed
+from pydantic import BaseModel
 
 
 class User(Document):
@@ -14,6 +15,6 @@ class User(Document):
     class Settings:
         name = "users"
         
-class UserUpdate(Document):
+class UserUpdate(BaseModel):
     username: Optional[str] 
     password:Optional [str]

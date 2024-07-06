@@ -33,8 +33,8 @@ async def update_pharmacy(pharmacy_id: str , payload: PharmacyUpdated):
        pharmacy_updated.name= payload.name
        
        
-   if (payload.adress):
-       pharmacy_updated.adress= payload.adress
+   if (payload.address):
+       pharmacy_updated.address= payload.address
        
    if (payload.phone):
        pharmacy_updated.phone= payload.phone
@@ -42,9 +42,7 @@ async def update_pharmacy(pharmacy_id: str , payload: PharmacyUpdated):
    if (payload.localisation):
        pharmacy_updated.localisation= payload.localisation
     
-   if (payload.products):
-       pharmacy_updated.products = payload.products
-       
+   
 
       
    await pharmacy_updated.save()

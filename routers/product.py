@@ -1,4 +1,6 @@
+from itertools import product
 from typing import List
+from bson import ObjectId
 from fastapi import APIRouter
 
 from models.product import Product, UpdateProduct
@@ -26,14 +28,11 @@ async def get_product_by_id(product_id: str) ->Product:
 
 #Update product
 @router.patch("/{product_id}",status_code=204)
-async def update_product(product_id: str , payload: UpdateProduct):
+async def update_product(product_id: str , payload:UpdateProduct ):
    product_updated= await Product.get(product_id)
    if (payload.name):
        product_updated.name= payload.name
        
-       
-   if (payload.component):
-       product_updated= payload.component
        
    if (payload.description):
        product_updated= payload.description
