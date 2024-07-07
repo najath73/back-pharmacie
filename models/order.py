@@ -1,23 +1,38 @@
+import datetime
 from typing import List, Optional
 from beanie import Document, Link
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from models.pharmacy import Pharmacy, ProductInPharmacy
 from models.user import User
 
 
-class ProductInOrder(BaseModel):
-    products: Link [List[ProductInPharmacy]]
-    pharmacy: Link [Pharmacy]
-    
 
-class OrderInPharmacy(Document):
+
+
+class Order(Document):
     user: Link [User]
-    productInOrder: ProductInOrder
+    pharmacy: Link [Pharmacy]
+    order_date: datetime = Field(default_factory=datetime.utcnow)
+    productsInOrder: [List[Link[ProductInOrder]]]
     
-class OrderUpdate(BaseModel):
-    user: Link [User]
-    productInOrder: Optional [List[ProductInOrder]]
+    
+    class Settings:
+        name = "orders"
+    
+class ProductInOrder(Document):
+    order: Link [Order]
+    product: Link [ProductInPharmacy]
+    quantity: int
+    
+    class Settings:
+        name = "product_in_orders"
+    
+    
+    
+    
+class ProductInOrderUpdate(BaseModel):
+    quantity: Optional [int]
     
     
 
