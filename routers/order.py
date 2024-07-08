@@ -34,6 +34,17 @@ async def post_order_in_pharmacy(payload: Order):
 
 
 
+#Get all user's order
+@router.get("/users/{user_id}", status_code=200)
+async def get_all_user_order(user_id:str) -> List [Order]:
+    user=await User.get(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    orders= await Order.find_all(Order.user==user_id).to_list()
+    return orders
+    
+
+
 
 
 
@@ -69,7 +80,7 @@ async def delete_order(order_id: str):
 async def delete_item_from_order(order_id: str, productInOrder_id: str):
     productInOrder = await ProductInOrder.get(productInOrder_id)
     if not productInOrder or productInOrder.order.id != order_id:
-        raise HTTPException(status_code=404, detail="Order item not found")
+        raise HTTPException(status_code=404, detail=" ProductInOrder not found")
     
     await productInOrder.delete()
     return
