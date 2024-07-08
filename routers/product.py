@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from models.product import Product, UpdateProduct
 from models.pharmacy import Pharmacy
 
-router = APIRouter(prefix="/product", tags=["Products"])
+router = APIRouter(prefix="/products", tags=["Products"])
 
 #Get all products
 @router.get("", status_code=200)
