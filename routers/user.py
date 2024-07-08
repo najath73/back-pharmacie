@@ -2,9 +2,10 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from pymongo.errors import DuplicateKeyError
 from models.user import User, UserUpdate
+from utils.auth import get_password_hash
 
 
-router = APIRouter(prefix="/user", tags=["Users"])
+router = APIRouter(prefix="/users", tags=["Users"])
 
 
 
@@ -17,7 +18,9 @@ async def get_all_user() -> List [User]:
 
 #post a user
 @router.post("",status_code=201, response_model=dict)
-async def post_user(payload: User):
+async def post_user(payload: User, ):
+   payload.passwoord= get_password_hash(User.password)
+
    try:
       user_created= await payload.create()
    except DuplicateKeyError as e:
