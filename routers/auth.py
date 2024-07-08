@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError
 from datetime import timedelta
-from models.user import User, UserCreate, UserResponse, Token, Role
-from utils.auth import ACCESS_TOKEN_EXPIRE_MINUTES, verify_password, get_password_hash, create_access_token, decode_access_token
+from models.user import User,  Token, Role
+from utils.auth import ACCESS_TOKEN_EXPIRE_MINUTES, verify_password, create_access_token
 from typing import List
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 router = APIRouter(tags=["Auth"])
 
@@ -14,7 +14,7 @@ router = APIRouter(tags=["Auth"])
 
 @router.post("/login", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = await User.find_one(User.email == form_data.username)
+    user = await User.find_one(User.username == form_data.username)
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
