@@ -40,7 +40,7 @@ async def get_all_user_order(user_id:str) -> List [Order]:
     user=await User.get(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    orders= await Order.find_all(Order.user==user_id).to_list()
+    orders= await Order.find_all(Order.user==user.id).to_list()
     return orders
     
 

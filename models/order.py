@@ -1,7 +1,6 @@
-import datetime
 from typing import List, Optional
 from beanie import Document, Link
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from models.pharmacy import Pharmacy, ProductInPharmacy
 from models.user import User
@@ -13,7 +12,6 @@ from models.user import User
 class Order(Document):
     user: Link [User]
     pharmacy: Link [Pharmacy]
-    order_date: datetime = Field(default_factory=datetime.utcnow)
     productsInOrder: [List[Link[ProductInOrder]]]
     
     
