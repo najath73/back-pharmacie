@@ -1,8 +1,10 @@
 
 from enum import Enum
 from typing import List, Optional
-from beanie import Document, Indexed
+from beanie import Document, Indexed, Link
 from pydantic import BaseModel
+
+from models.pharmacy import Pharmacy
 
 
 class Role(str, Enum):
@@ -18,6 +20,7 @@ class User(Document):
     email: Indexed(str, unique=True)
     password: str
     roles: List[Role]
+    pharmacy: Optional[Link[Pharmacy]]
 
     class Settings:
         name = "users"
