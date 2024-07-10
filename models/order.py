@@ -9,17 +9,19 @@ from models.user import User
 
 
 
+
 class Order(Document):
     user: Link [User]
     pharmacy: Link [Pharmacy]
-    productsInOrder: [List[Link[ProductInOrder]]]
+    productsInOrder: List[Link["ProductInOrder"]]
     
     
     class Settings:
         name = "orders"
+
     
 class ProductInOrder(Document):
-    order: Link [Order]
+    order: Link ["Order"]
     product: Link [ProductInPharmacy]
     quantity: int
     
