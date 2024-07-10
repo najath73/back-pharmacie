@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from models.order import Order, OrderInPharmacy, OrderUpdate, ProductInOrder, ProductInOrderUpdate
+from models.order import Order, ProductInOrder, ProductInOrderUpdate
 from models.user import User
 
 
