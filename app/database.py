@@ -22,4 +22,4 @@ async def init_db():
     # Create a MongoDB client
     client = AsyncIOMotorClient(CONNECTION_STRING, tlsCAFile=certifi.where())
 
-    await init_beanie(database=client.pharmaDB, document_models=[Product, Pharmacy, User, ProductInPharmacy, Order,ProductInOrder])
+    await init_beanie(database=client.pharmaDB, document_models=[Product, Pharmacy, User, ProductInPharmacy,ProductInOrder, Order])

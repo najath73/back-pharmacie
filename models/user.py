@@ -19,8 +19,8 @@ class User(Document):
     firstname: str
     email: Indexed(str, unique=True)
     password: str
-    roles: List[Role]
-    pharmacy: Optional[Link[Pharmacy]]
+    roles: List[Role] = []
+    pharmacy: Optional[Link[Pharmacy]] = None
 
     class Settings:
         name = "users"

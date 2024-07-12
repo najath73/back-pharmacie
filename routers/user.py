@@ -11,7 +11,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 #Get all users
 @router.get("",status_code=200)
-async def get_all_user() -> List [User]:
+async def get_all_user():
    users= await User.find_all().to_list()
    return users
 

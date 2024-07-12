@@ -1,8 +1,10 @@
 from typing import List
 
+from bson import ObjectId
 from fastapi import APIRouter, HTTPException
 
-from models.order import Order, ProductInOrder, ProductInOrderUpdate
+from models.order import Order, PostOrder, ProductInOrder, ProductInOrderUpdate
+from models.product import Product
 from models.user import User
 
 
@@ -25,7 +27,14 @@ async def get_order_by_id(order_id: str) -> Order:
 
 #Post  oder 
 @router.post("", status_code=201, response_model=dict)
-async def post_order_in_pharmacy(payload: Order):
+async def post_order_in_pharmacy(payload: PostOrder):
+    user = User.get(payload.user_id)
+    pharmacie = Pharmacie.get(payload.pharmacy_id)
+    productsInOrder = []
+    for item in payload.product:
+        productsInOrder.append(Product.get(item))
+
+    order = Order(user=user, pharmacy="", productsInOrder="")
     order = await payload.create()
     return {"message": "Order added successufuly", "id": str(order.id)}
 
@@ -40,7 +49,7 @@ async def get_all_user_order(user_id:str) -> List [Order]:
     user=await User.get(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    orders= await Order.find_all(Order.user==user.id).to_list()
+    orders= await Order.find_all(Order.user.id== ObjectId(user.id)).to_list()
     return orders
     
 
@@ -49,7 +58,7 @@ async def get_all_user_order(user_id:str) -> List [Order]:
 
 
 #Update  Product in order
-@router.patch("/{ordr_id}",status_code=204)
+@router.patch("/{order_id}",status_code=204)
 async def update_order(order_id: str , payload: ProductInOrderUpdate):
    order= await Order.get(order_id)
    if not order:
