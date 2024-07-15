@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
 from models.user import User, Role
-from utils.auth import ACCESS_TOKEN_EXPIRE_MINUTES, verify_password, create_access_token
+from utils.auth import ACCESS_TOKEN_EXPIRE_MINUTES, verify_password, create_access_token, get_password_hash
 from models.token import Token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")

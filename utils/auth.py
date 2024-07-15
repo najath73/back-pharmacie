@@ -1,9 +1,10 @@
+from fastapi import HTTPException
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import JWTError, jwt
+from jose import ExpiredSignatureError, JWTError, jwt
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"])
 
 SECRET_KEY = "pharmacie"
 ALGORITHM = "HS256"
@@ -28,9 +29,11 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 def decode_access_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
+        email: str = payload.get("email")
         if email is None:
             raise JWTError("Invalid token")
         return email
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
     except JWTError:
         raise JWTError("Invalid token")

@@ -19,7 +19,8 @@ async def get_all_user():
 #post a user
 @router.post("",status_code=201, response_model=dict)
 async def post_user(payload: User, ):
-   payload.password= get_password_hash(User.password)
+
+   payload.password= get_password_hash(payload.password)
 
    try:
       user_created= await payload.create()
