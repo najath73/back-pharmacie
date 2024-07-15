@@ -1,13 +1,17 @@
-from typing import List
+from typing import Annotated, List
 
 from bson import ObjectId
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 
-from models.order import Order, PostOrder, ProductInOrder, ProductInOrderUpdate
+from models.order import Order, PostOrder, ProductInOrder, OrderUpdate
 from models.product import Product
+from models.pharmacy import ProductInPharmacy
 from models.user import User
+from utils.auth import decode_access_token
 
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -27,16 +31,26 @@ async def get_order_by_id(order_id: str) -> Order:
 
 #Post  oder 
 @router.post("", status_code=201, response_model=dict)
-async def post_order_in_pharmacy(payload: PostOrder):
-    user = User.get(payload.user_id)
-    pharmacie = Pharmacie.get(payload.pharmacy_id)
-    productsInOrder = []
-    for item in payload.product:
-        productsInOrder.append(Product.get(item))
+async def post_order_in_pharmacy(payload: PostOrder, token: Annotated[str, Depends(oauth2_scheme)]):
+    
 
-    order = Order(user=user, pharmacy="", productsInOrder="")
-    order = await payload.create()
-    return {"message": "Order added successufuly", "id": str(order.id)}
+    user_email = decode_access_token(token=token)
+    user = await User.find_one(User.email == user_email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User doesn't exist")
+    listOfProductsInOrder = []
+    for item in payload.producstInOrder:
+        productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(item.pharmacy_id), ProductInPharmacy.product.id == ObjectId(item.product_id))
+        if(productInPharmacy.quantity < item.quantity):
+            raise HTTPException(status_code=400, detail="Quantité de produit indisponible en stock")
+        producInOrder = ProductInOrder(productInPharmcy=productInPharmacy.id, quantity= item.quantity)
+        producInOrderCreate= await producInOrder.create()
+        listOfProductsInOrder.append(producInOrderCreate.id)
+    print(listOfProductsInOrder)
+    order = Order(productsInOrder=listOfProductsInOrder, user=user)
+    orderCreate = await order.create()
+    
+    return {"message": "Order added successufuly", "id": str(orderCreate.id)}
 
 
 #Add Product in  oder 
@@ -57,43 +71,19 @@ async def get_all_user_order(user_id:str) -> List [Order]:
 
 
 
-#Update  Product in order
+#Update order status
 @router.patch("/{order_id}",status_code=204)
-async def update_order(order_id: str , payload: ProductInOrderUpdate):
-   order= await Order.get(order_id)
-   if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-   
-   if (payload.quantity):
-       order.quantity= payload.quantity
-       await order.save()
-       return
+async def update_order(order_id: str , payload: OrderUpdate):
+    order = await Order.get(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail=" Order not found")
+    
+    order.status = payload.status
+    await order.save()
+    return
         
        
      
-
-  
-  
-#delete order 
-@router.delete("/{order_id}", status_code=204)
-async def delete_order(order_id: str):
-   order= await Order.get(order_id)
-   if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-   
-   await order.delete()
-   return  
-
-#Delete Product in order
-@router.delete("/{order_id}/productInOrder/{productInOrder_id}", status_code=204)
-async def delete_item_from_order(order_id: str, productInOrder_id: str):
-    productInOrder = await ProductInOrder.get(productInOrder_id)
-    if not productInOrder or productInOrder.order.id != order_id:
-        raise HTTPException(status_code=404, detail=" ProductInOrder not found")
-    
-    await productInOrder.delete()
-    return
-    
 
 
 
