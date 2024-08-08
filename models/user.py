@@ -1,7 +1,17 @@
 
-from typing import Optional
-from beanie import Document, Indexed
+from enum import Enum
+from typing import List, Optional
+from beanie import Document, Indexed, Link
 from pydantic import BaseModel
+
+from models.pharmacy import Pharmacy
+
+
+class Role(str, Enum):
+    SUPER_ADMIN = "super_admin"
+    SIMPLE_USER= "simple_user"
+    PHARMACY_MANAGER = "pharmacy_manager"
+    PHARMACY_WORKER = "pharmacy_worker"
 
 
 class User(Document):
@@ -10,7 +20,8 @@ class User(Document):
     firstname: str
     email: Indexed(str, unique=True)
     password: str
-    role: str
+    roles: Role
+    pharmacy: Optional[Link[Pharmacy]] = None
 
     class Settings:
         name = "users"
