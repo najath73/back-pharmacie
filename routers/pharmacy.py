@@ -78,7 +78,7 @@ async def get_all_products_in_pharmacy(pharmacy_id: str) -> List [ProductInPharm
    if not pharmacy:
       raise HTTPException(status_code=404, detail= "Pharmacy not found")
    
-   productsInPharmacy= await ProductInPharmacy.find(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), fetch_links=True,).to_list()
+   productsInPharmacy= await ProductInPharmacy.find(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), fetch_links=True).to_list()
    return productsInPharmacy
 
 #Post a product in a pharmacy
@@ -93,10 +93,12 @@ async def add_product_to_pharmacy(pharmacy_id: str, product_id: str, payload:Pro
 
 #Get product by id a pharmacy
 @router.get("/{pharmacy_id}/products/{product_id}", status_code=200)
-async def get_product_by_id_in_pharmacy(pharmacy_id: str, product_id: str) -> Product :
+async def get_product_by_id_in_pharmacy(pharmacy_id: str, product_id: str) -> ProductInPharmacy :
    await check_pharmacy_and_product (pharmacy_id, product_id) #To verify that the product and pharmacy exist
-   productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), ProductInPharmacy.product.id == ObjectId(product_id))
-   productInPharmacy= ProductInPharmacy.get(product_id)
+   productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), ProductInPharmacy.product.id == ObjectId(product_id),fetch_links=True)
+   if not productInPharmacy:
+      raise HTTPException(status_code=404, detail="Product not found In pharmacy")
+   
    return productInPharmacy
 
 #update product in a pharmacy
@@ -119,7 +121,7 @@ async def update_product_in_pharmacie(pharmacy_id: str, product_id: str , payloa
 @router.delete("/{pharmacy_id}/products/{product_id}")
 async def delete_product_in_pharmacy(pharmacy_id,product_id: str):
    await check_pharmacy_and_product(pharmacy_id, product_id)
-   productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(pharmacy_id), ProductInPharmacy.product.id == ObjectId(product_id))
+   productInPharmacy = await ProductInPharmacy.find_one( ProductInPharmacy.product.id == ObjectId(product_id))
    await productInPharmacy.delete()
    return 
     

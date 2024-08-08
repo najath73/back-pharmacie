@@ -35,7 +35,7 @@ async def update_product(product_id: str , payload:UpdateProduct ):
        
        
    if (payload.description):
-       product_updated= payload.description
+       product_updated.description= payload.description
        
 
        
