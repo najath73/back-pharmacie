@@ -21,6 +21,7 @@ class User(Document):
     email: Indexed(str, unique=True)
     password: str
     roles: Role
+    pharmacy: Optional[Link[Pharmacy]] = None
 
     class Settings:
         name = "users"
