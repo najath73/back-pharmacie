@@ -21,7 +21,6 @@ class User(Document):
     email: Indexed(str, unique=True)
     password: str
     roles: Role
-    pharmacy: Optional[Link[Pharmacy]] = None
 
     class Settings:
         name = "users"
@@ -29,3 +28,11 @@ class User(Document):
 class UserUpdate(BaseModel):
     username: Optional[str] 
     password:Optional [str]
+
+class PostUserToPharmacy(BaseModel):
+    username: Indexed(str, unique=True)
+    name: str
+    firstname: str
+    email: Indexed(str, unique=True)
+    password: Optional[str] = None
+    roles: Role

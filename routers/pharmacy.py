@@ -1,9 +1,11 @@
 from typing import List
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException
-
+from pymongo.errors import DuplicateKeyError
 from models.pharmacy import Pharmacy, ProductInPharmacyAdd, PharmacyUpdated, ProductInPharmacy,ProductInPharmacyUpdate
 from models.product import Product
+from models.user import PostUserToPharmacy, User
+from utils.auth import get_password_hash, generate_password
 
 router = APIRouter(prefix="/pharmacies", tags=["Pharmacies"])
 
@@ -128,6 +130,35 @@ async def delete_product_in_pharmacy(pharmacy_id,product_id: str):
       
     
     
-      
+#post a user
+@router.post("/{pharmacy_id}/users",status_code=201, response_model=dict)
+async def post_user(pharmacy_id: str, payload: PostUserToPharmacy):
+
+   payload.password = generate_password()
+   payload.password= get_password_hash(payload.password)
+   
+   user_to_create = User(
+      username=payload.username,
+      name=payload.name,
+      firstname=payload.firstname,
+      email=payload.email,
+      password=payload.password,
+      roles=payload.roles,
+      pharmacy=pharmacy_id  # Associe l'utilisateur à la pharmacie par l'ID
+   )
+   print(payload.password)
+   try:
+      user_created= await user_to_create.create()
+   except DuplicateKeyError as e:
+        error_details = e.details
+        error_message = error_details.get('errmsg', str(e))
+
+        error_info = {
+            "error_description": "Duplicate entry detected",
+            "error_message": error_message          
+        }
+        raise HTTPException(status_code=400, detail=error_info)
+
+   return {"message": "User added successfully", "id": str(user_created.id)} 
     
         

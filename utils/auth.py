@@ -37,3 +37,16 @@ def decode_access_token(token: str):
         raise HTTPException(status_code=401, detail="Token expired")
     except JWTError:
         raise JWTError("Invalid token")
+    
+import random
+import string
+
+def generate_password(length=12):
+    # Définir les caractères possibles pour le mot de passe
+    characters = string.ascii_letters + string.digits + string.punctuation
+
+    # Générer un mot de passe aléatoire
+    password = ''.join(random.choice(characters) for _ in range(length))
+
+    return password
+
