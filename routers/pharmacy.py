@@ -130,11 +130,12 @@ async def delete_product_in_pharmacy(pharmacy_id,product_id: str):
       
     
     
-#post a user
+#post a user to a pharmacy
 @router.post("/{pharmacy_id}/users",status_code=201, response_model=dict)
-async def post_user(pharmacy_id: str, payload: PostUserToPharmacy):
+async def post_user_to_a_pharmacy(pharmacy_id: str, payload: PostUserToPharmacy):
 
    payload.password = generate_password()
+   print(payload.password)
    payload.password= get_password_hash(payload.password)
    
    user_to_create = User(
@@ -146,7 +147,7 @@ async def post_user(pharmacy_id: str, payload: PostUserToPharmacy):
       roles=payload.roles,
       pharmacy=pharmacy_id  # Associe l'utilisateur à la pharmacie par l'ID
    )
-   print(payload.password)
+   
    try:
       user_created= await user_to_create.create()
    except DuplicateKeyError as e:
@@ -161,4 +162,15 @@ async def post_user(pharmacy_id: str, payload: PostUserToPharmacy):
 
    return {"message": "User added successfully", "id": str(user_created.id)} 
     
-        
+#Get all user for a pharmacy
+@router.get("/{pharmacy_id}/users",status_code=201, response_model=List[User])
+async def get_user_for_a_pharmacy(pharmacy_id: str):
+
+   #get pharmacy
+   pharmacy= await Pharmacy.get(pharmacy_id)
+   if not pharmacy:
+      raise HTTPException(status_code=404, detail= "Pharmacy not found")
+   
+   print(pharmacy_id)
+   users= await User.find(User.pharmacy.id == ObjectId(pharmacy_id)).to_list()
+   return users
