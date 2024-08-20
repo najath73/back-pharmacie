@@ -12,7 +12,7 @@ class Product(Document):
         name = "products"
         
 class UpdateProduct(BaseModel): 
-    name: Optional [str]
-    description: Optional[str]
+    name: Optional [str] = None
+    description: Optional[str] = None
         
 
