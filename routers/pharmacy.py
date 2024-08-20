@@ -6,6 +6,16 @@ from models.pharmacy import Pharmacy, ProductInPharmacyAdd, PharmacyUpdated, Pro
 from models.product import Product
 from models.user import PostUserToPharmacy, User
 from utils.auth import get_password_hash, generate_password
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+from dotenv import load_dotenv
+
+from utils.email import send_registration_email
+
+load_dotenv()
+
 
 router = APIRouter(prefix="/pharmacies", tags=["Pharmacies"])
 
@@ -135,7 +145,7 @@ async def delete_product_in_pharmacy(pharmacy_id,product_id: str):
 async def post_user_to_a_pharmacy(pharmacy_id: str, payload: PostUserToPharmacy):
 
    payload.password = generate_password()
-   print(payload.password)
+   pswd_not_hash = (payload.password)
    payload.password= get_password_hash(payload.password)
    
    user_to_create = User(
@@ -150,6 +160,9 @@ async def post_user_to_a_pharmacy(pharmacy_id: str, payload: PostUserToPharmacy)
    
    try:
       user_created= await user_to_create.create()
+
+      # Envoi de l'email en utilisant la fonction séparée
+      send_registration_email(payload.email, payload.username, pswd_not_hash)
    except DuplicateKeyError as e:
         error_details = e.details
         error_message = error_details.get('errmsg', str(e))
