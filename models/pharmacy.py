@@ -41,10 +41,10 @@ class ProductInPharmacy(Document):
 
 
 class PharmacyUpdated(BaseModel):
-    name: Optional[str]
-    address: Optional[str]
-    phone: Optional[str]
-    localisation: Optional[Localisation]
+    name: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    localisation: Optional[Localisation] = None
 
 
 class ProductInPharmacyAdd(BaseModel):
