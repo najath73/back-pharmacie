@@ -11,7 +11,7 @@ from models.user import User
 from utils.auth import decode_access_token
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 

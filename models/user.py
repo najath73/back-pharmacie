@@ -37,3 +37,11 @@ class PostUserToPharmacy(BaseModel):
     email: Indexed(str, unique=True)
     password: Optional[str] = None
     roles: Role
+
+class UserInfo(BaseModel):
+    username: str
+    name: str
+    firstname: str
+    email: str
+    roles: str
+    pharmacy: Optional[str]  # Si tu souhaites inclure des informations sur la pharmacie
