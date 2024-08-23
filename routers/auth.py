@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
-from models.user import User, Role, UserInfo
+from models.pharmacy import Pharmacy
+from models.user import User, Role, UserInfo, UserPharmacyInfo
 from utils.auth import ACCESS_TOKEN_EXPIRE_MINUTES, decode_access_token, verify_password, create_access_token, get_password_hash
 from models.token import Token
 
@@ -36,11 +37,16 @@ async def get_user_info(token: str = Depends(oauth2_scheme)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
+    if user.pharmacy:  # Vérifiez le type de l'objet Link selon votre ORM
+        pharmacy = await Pharmacy.get(user.pharmacy.to_dict()["id"])
+        pharmacyInfo = UserPharmacyInfo(id= str(pharmacy.id), name = pharmacy.name)
+    else:
+        pharmacy = None
     return UserInfo(
         username=user.username,
         name=user.name,
         firstname=user.firstname,
         email=user.email,
         roles=user.roles,
-        pharmacy=user.pharmacy.to_dict()["id"] if user.pharmacy else None
+        pharmacy=pharmacyInfo if user.pharmacy else None
     )
