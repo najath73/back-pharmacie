@@ -36,12 +36,11 @@ async def get_user_info(token: str = Depends(oauth2_scheme)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
-
     return UserInfo(
         username=user.username,
         name=user.name,
         firstname=user.firstname,
         email=user.email,
         roles=user.roles,
-        pharmacy=user.pharmacy.id if user.pharmacy else None
+        pharmacy=user.pharmacy.to_dict()["id"] if user.pharmacy else None
     )
