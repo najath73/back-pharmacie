@@ -38,10 +38,13 @@ class PostUserToPharmacy(BaseModel):
     password: Optional[str] = None
     roles: Role
 
+class UserPharmacyInfo(BaseModel):
+    id: str
+    name: str
 class UserInfo(BaseModel):
     username: str
     name: str
     firstname: str
     email: str
     roles: str
-    pharmacy: Optional[str]  # Si tu souhaites inclure des informations sur la pharmacie
+    pharmacy: Optional[UserPharmacyInfo]  # Si tu souhaites inclure des informations sur la pharmacie
