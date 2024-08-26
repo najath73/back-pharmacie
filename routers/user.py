@@ -49,10 +49,18 @@ async def get_user_by_id(user_id: str):
 async def update_user(user_id: str,payload: UserUpdate):
    user_updated= await User.get(user_id)
    
-   if(payload.username):
-      user_updated.username= payload.username
-   if(payload.password):
-      user_updated.password= payload.password
+   if payload.username:
+        user_updated.username = payload.username
+   if payload.name:
+      user_updated.name = payload.name
+   if payload.firstname:
+      user_updated.firstname = payload.firstname
+   if payload.email:
+      user_updated.email = payload.email
+   if payload.password:
+      user_updated.password = payload.password
+   if payload.roles:
+      user_updated.roles = payload.roles
       
    await user_updated.save()
    return{"message": "user updated successefuly"}
