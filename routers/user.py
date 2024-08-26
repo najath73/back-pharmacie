@@ -19,7 +19,6 @@ async def get_all_user():
 #post a user
 @router.post("",status_code=201, response_model=dict)
 async def post_user(payload: User, ):
-   payload.password = generate_password()
    print(payload.password)
    payload.password= get_password_hash(payload.password)
    # Après envoie de mail 
