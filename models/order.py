@@ -1,8 +1,10 @@
+from datetime import datetime
 from typing import List, Optional
 from beanie import Document, Link
 from pydantic import BaseModel, Field
 from enum import Enum
-from models.pharmacy import Pharmacy, ProductInPharmacy
+from models.pharmacy import Pharmacy
+from models.product import Product
 from models.user import User
 
 
@@ -14,17 +16,17 @@ class StatusOrder(str, Enum):
     CANCELLED = "cancelled"
     RETURNED = "returned"
 
-class ProductInOrder(Document):
-    productInPharmcy: Link [ProductInPharmacy]
+class ProductInOrder(BaseModel):
+    product: Link[Product]
+    unitPrice: float
     quantity: int
-    
-    class Settings:
-        name = "product_in_orders"
     
 
 class Order(Document):
     user: Link [User]
-    productsInOrder: List[Link[ProductInOrder]]
+    pharmacy: Link[Pharmacy]
+    productsInOrder: List[ProductInOrder]
+    date: datetime = datetime.now()
     status: StatusOrder  = Field(default=StatusOrder.PENDING)
     
     
@@ -33,13 +35,12 @@ class Order(Document):
 
 class OrderUpdate(BaseModel):
     status: StatusOrder
-    
-class ProductInOrderPost(BaseModel):
-    pharmacy_id: str
-    product_id: str
-    quantity: int
 
+class ProductInOrderPost(BaseModel): 
+    product: str
+    quantity: int
 class PostOrder(BaseModel):
+    pharmacy_id: str
     producstInOrder: List[ProductInOrderPost]
 
 
