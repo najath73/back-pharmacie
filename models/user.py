@@ -27,8 +27,12 @@ class User(Document):
         name = "users"
         
 class UserUpdate(BaseModel):
-    username: Optional[str] 
-    password:Optional [str]
+    username: Optional[str] = None
+    name: Optional[str] = None
+    firstname: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+    roles: Optional[Role] = None
 
 class PostUserToPharmacy(BaseModel):
     username: Indexed(str, unique=True) # type: ignore
