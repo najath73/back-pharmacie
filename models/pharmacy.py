@@ -52,5 +52,5 @@ class ProductInPharmacyAdd(BaseModel):
     quantity: int
 
 class ProductInPharmacyUpdate(BaseModel):
-    price: Optional[float]
-    quantity: Optional[int]
+    price: Optional[float] = None
+    quantity: Optional[int] = None

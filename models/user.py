@@ -15,10 +15,10 @@ class Role(str, Enum):
 
 
 class User(Document):
-    username: Indexed(str, unique=True)
+    username: Indexed(str, unique=True) # type: ignore
     name: str
     firstname: str
-    email: Indexed(str, unique=True)
+    email: Indexed(str, unique=True) # type: ignore
     password: str
     roles: Role
     pharmacy: Optional[Link[Pharmacy]] = None
@@ -27,14 +27,18 @@ class User(Document):
         name = "users"
         
 class UserUpdate(BaseModel):
-    username: Optional[str] 
-    password:Optional [str]
+    username: Optional[str] = None
+    name: Optional[str] = None
+    firstname: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+    roles: Optional[Role] = None
 
 class PostUserToPharmacy(BaseModel):
-    username: Indexed(str, unique=True)
+    username: Indexed(str, unique=True) # type: ignore
     name: str
     firstname: str
-    email: Indexed(str, unique=True)
+    email: Indexed(str, unique=True) # type: ignore
     password: Optional[str] = None
     roles: Role
 
