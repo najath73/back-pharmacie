@@ -46,6 +46,7 @@ class UserPharmacyInfo(BaseModel):
     id: str
     name: str
 class UserInfo(BaseModel):
+    id: str
     username: str
     name: str
     firstname: str

@@ -43,6 +43,7 @@ async def get_user_info(token: str = Depends(oauth2_scheme)):
     else:
         pharmacy = None
     return UserInfo(
+        id= str(user.id),
         username=user.username,
         name=user.name,
         firstname=user.firstname,
