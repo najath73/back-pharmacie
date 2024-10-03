@@ -1,7 +1,6 @@
 from typing import List, Optional
 from beanie import Document, Link
 from pydantic import BaseModel, Field
-from models.product import Product
 
 
 
@@ -14,6 +13,7 @@ class Pharmacy(Document):
     address: str
     phone: str
     localisation: Localisation
+    img: str
 
     class Settings:
         # The name of the collection to store these objects.
@@ -33,17 +33,11 @@ class Pharmacy(Document):
         }
         
 
-class ProductInPharmacy(Document):
-    product: Link[Product]
-    pharmacy: Link[Pharmacy]
-    price: float
-    quantity: int
-
-
 class PharmacyUpdated(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
     phone: Optional[str] = None
+    img: Optional[str] = None
     localisation: Optional[Localisation] = None
 
 
