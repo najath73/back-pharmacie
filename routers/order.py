@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from models.order import Order, PostOrder, ProductInOrder, OrderUpdate
 from models.product import Product
-from models.pharmacy import Pharmacy, ProductInPharmacy
+from models.pharmacy import Pharmacy
 from models.user import User
 from utils.auth import decode_access_token
 
@@ -20,41 +20,6 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
 async def get_all_order_in_pharmacie() -> List [Order]:
     orders= await Order.find_all().to_list()
     return orders
-
-
-#Post  oder 
-@router.post("", status_code=201, response_model=dict)
-async def post_order_in_pharmacy(payload: PostOrder, token: Annotated[str, Depends(oauth2_scheme)]):
-    
-
-    user_email = decode_access_token(token=token)
-    user = await User.find_one(User.email == user_email)
-    if not user:
-        raise HTTPException(status_code=404, detail="User doesn't exist")
-    
-
-    productInOrder = []
-    for item in payload.producstInOrder:
-        productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(payload.pharmacy_id), ProductInPharmacy.product.id == ObjectId(item.product))
-        if not productInPharmacy:
-            raise HTTPException(status_code=400, detail="Le produit que vous chercher a commander n'est pas disponible dans cette pharmacie")
-        if(productInPharmacy.quantity < item.quantity):
-            raise HTTPException(status_code=400, detail="Quantité de produit indisponible en stock: "+ productInPharmacy.id)
-        
-        productInOrder.append(ProductInOrder(product=item.product, unitPrice= productInPharmacy.price, quantity=item.quantity))
-        
-    
-    
-    order = Order(productsInOrder=productInOrder, user=user, pharmacy=ObjectId(payload.pharmacy_id))
-    for item in payload.producstInOrder:
-        productInPharmacy = await ProductInPharmacy.find_one(ProductInPharmacy.pharmacy.id == ObjectId(payload.pharmacy_id), ProductInPharmacy.product.id == ObjectId(item.product))
-        productInPharmacy.quantity -= item.quantity
-        print(productInPharmacy)
-        await productInPharmacy.save()
-    orderCreate = await order.create() 
-    
-    return {"message": "Order added successufuly", "id": str(orderCreate.id)}
-
 
 
 
