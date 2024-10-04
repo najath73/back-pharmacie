@@ -10,6 +10,7 @@ class Product(Document):
     description: str
     img: str
     quantity: float
+    price: float
     pharmacy: Link[Pharmacy]
     class Settings:
         name = "products"
@@ -19,6 +20,7 @@ class UpdateProduct(BaseModel):
     description: Optional[str] = None
     img: Optional[str] = None
     quantity: Optional[float]= None
+    price: Optional[float]= None
     pharmacy_id: Optional[str] = None
 
 
@@ -27,4 +29,5 @@ class AddProduct(BaseModel):
     description: str = "Description"
     img: Optional[str]
     quantity: float
+    price: float
     pharmacy_id: str

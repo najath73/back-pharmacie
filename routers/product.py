@@ -23,7 +23,7 @@ async def get_all_products(search: Optional[str] = Query(None, description="Sear
 #Post a product
 @router.post("", status_code=201, response_model=dict)
 async def post_a_product(payload: AddProduct):
-    productToAdded= Product(name=payload.name, description=payload.description, img=payload.description, pharmacy=payload.pharmacy_id, quantity=payload.quantity)
+    productToAdded= Product(name=payload.name, description=payload.description, img=payload.description, pharmacy=payload.pharmacy_id, quantity=payload.quantity, price= payload.price)
     product_added = await productToAdded.create()
     return {"message": "Product added successfully", "id": str(product_added.id)}
 
@@ -43,6 +43,8 @@ async def update_product(product_id: str , payload:UpdateProduct ):
        product_updated.description= payload.description
     if (payload.quantity):
        product_updated.quantity= payload.quantity
+    if (payload.price):
+       product_updated.price= payload.price
     if (payload.img):
        product_updated.img= payload.img
       
