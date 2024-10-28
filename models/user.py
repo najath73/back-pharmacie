@@ -1,55 +1,80 @@
-
 from enum import Enum
 from typing import List, Optional
 from beanie import Document, Indexed, Link
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from models.pharmacy import Pharmacy
 
 
-class Role(str, Enum):
-    SUPER_ADMIN = "super_admin"
-    SIMPLE_USER= "simple_user"
-    PHARMACY_MANAGER = "pharmacy_manager"
-    PHARMACY_WORKER = "pharmacy_worker"
-
+class UserRole(str, Enum):
+    CUSTOMER = "customer"
+    PHARMACY_ADMIN = "pharmacy_admin"
+    PHARMACY_EMPLOYEE = "pharmacy_employee"
+    SUPER_ADMIN = "super_admin"  # Added SuperAdmin role
 
 class User(Document):
     username: Indexed(str, unique=True) # type: ignore
-    name: str
-    firstname: str
-    email: Indexed(str, unique=True) # type: ignore
-    password: str
-    roles: Role
-    pharmacy: Optional[Link[Pharmacy]] = None
+    email: EmailStr
+    hashed_password: str
+    role: UserRole
+    first_name: str  # Added first name
+    last_name: str   # Added last name
 
     class Settings:
-        name = "users"
-        
+        collection = "users"
+
+class Customer(Document):
+    user: Link[User]
+
+class PharmacyEmploye(Document):
+    pharmacy: Link[Pharmacy]
+    user : Link[User]
+
+class SuperAdmin(Document):  # Added SuperAdmin class
+    user: Link[User]
+
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+    role: UserRole
+    first_name: str  # Added first name
+    last_name: str   # Added last name
+    pharmacy_id: Optional[str] = None
+
 class UserUpdate(BaseModel):
     username: Optional[str] = None
-    name: Optional[str] = None
-    firstname: Optional[str] = None
     email: Optional[str] = None
     password: Optional[str] = None
-    roles: Optional[Role] = None
+    role: Optional[UserRole] = None
+    first_name: Optional[str] = None  # Added first name
+    last_name: Optional[str] = None   # Added last name
+    pharmacy_id: Optional[str] = None
 
-class PostUserToPharmacy(BaseModel):
-    username: Indexed(str, unique=True) # type: ignore
-    name: str
-    firstname: str
-    email: Indexed(str, unique=True) # type: ignore
-    password: Optional[str] = None
-    roles: Role
 
-class UserPharmacyInfo(BaseModel):
-    id: str
-    name: str
+
 class UserInfo(BaseModel):
-    id: str
     username: str
-    name: str
-    firstname: str
     email: str
-    roles: str
-    pharmacy: Optional[UserPharmacyInfo]  # Si tu souhaites inclure des informations sur la pharmacie
+    role: UserRole
+    first_name: str
+    last_name: str
+
+
+
+class PharmacyUserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+    role: UserRole = UserRole.PHARMACY_EMPLOYEE
+    first_name: str
+    last_name: str
+
+
+class CustomerUserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+    role: UserRole = UserRole.CUSTOMER
+    first_name: str
+    last_name: str
