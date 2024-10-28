@@ -1,9 +1,14 @@
-from fastapi import HTTPException
+from bson import ObjectId
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import ExpiredSignatureError, JWTError, jwt
 
+from models.user import User
+pwd_context = CryptContext(schemes=["bcrypt"])
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 pwd_context = CryptContext(schemes=["bcrypt"])
 
 SECRET_KEY = "pharmacie"
@@ -29,10 +34,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 def decode_access_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("email")
-        if email is None:
+        user_id = payload.get("user_id")
+        if user_id is None:
             raise JWTError("Invalid token")
-        return email
+        return payload
     except ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
     except JWTError:
@@ -50,3 +55,19 @@ def generate_password(length=12):
 
     return password
 
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = decode_access_token(token)
+        user_id = payload.get("user_id")
+        user = await User.get(ObjectId(user_id))
+        if user is None:
+            raise credentials_exception
+        return user
+    except Exception:
+        raise credentials_exception

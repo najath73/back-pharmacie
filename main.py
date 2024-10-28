@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from app.database import init_db
 import routers.auth
+import routers.category
 import routers.order
 import routers.pharmacy 
 import routers.product
@@ -32,4 +33,5 @@ app.include_router(routers.pharmacy.router)
 app.include_router(routers.product.router)
 app.include_router(routers.user.router)
 app.include_router(routers.order.router)
+app.include_router(routers.category.router)
 app.include_router(routers.auth.router)
