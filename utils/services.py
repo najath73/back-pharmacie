@@ -9,9 +9,9 @@ from models.pharmacy import Pharmacy
 async def fetch_products(search: Optional[str] = None) -> List[Product]:
     if search:
         logging.info(f"Searching for products matching: {search}")
-        return await Product.find({"name": {"$regex": search, "$options": "i"}}).to_list()
+        return await Product.find({"name": {"$regex": search, "$options": "i"}}, fetch_links=True).to_list()
     logging.info("Fetching all products")
-    return await Product.find_all().to_list()
+    return await Product.find_all(fetch_links=True).to_list()
 
 # Fetch a single product by its ID
 async def fetch_product_by_id(product_id: str) -> Product:
