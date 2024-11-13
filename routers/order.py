@@ -58,7 +58,15 @@ async def create_order(order: PostOrder, token: Annotated[str, Depends(oauth2_sc
     await new_order.save()
     return new_order
 
+# Get all user orders
+@router.get("/", response_model=List[Order])
+async def get_user_orders(token: Annotated[str, Depends(oauth2_scheme)]):
+    user_id = decode_access_token(token).get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid authentication credentials")
 
+    orders = await Order.find({"user_id": ObjectId(user_id)},fetch_links=True).to_list()
+    return orders
 
 @router.get("/{order_id}", response_model=Order)
 async def get_order(order_id: str, token: Annotated[str, Depends(oauth2_scheme)]):
