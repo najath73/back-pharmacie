@@ -31,7 +31,7 @@ class Order(Document):
     order_lines: List[Link[OrderLine]] = None  # List of OrderLine IDs
     billing_address: str
     shipping_address: str
-    user_id: Link[Customer]
+    user_id: Link[User]
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
