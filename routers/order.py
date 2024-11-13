@@ -65,7 +65,9 @@ async def get_user_orders(token: Annotated[str, Depends(oauth2_scheme)]):
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid authentication credentials")
 
-    orders = await Order.find({"user_id": ObjectId(user_id)},fetch_links=True).to_list()
+
+    print(user_id)
+    orders = await Order.find(Order.user_id.id == ObjectId(user_id),fetch_links=True).to_list()
     return orders
 
 @router.get("/{order_id}", response_model=Order)
