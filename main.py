@@ -7,6 +7,7 @@ import routers.auth
 import routers.category
 import routers.order
 import routers.pharmacy 
+import routers.prescription
 import routers.product
 import routers.user
 
@@ -35,3 +36,4 @@ app.include_router(routers.user.router)
 app.include_router(routers.order.router)
 app.include_router(routers.category.router)
 app.include_router(routers.auth.router)
+app.include_router(routers.prescription.router)
