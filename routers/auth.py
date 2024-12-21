@@ -1,8 +1,9 @@
+from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
 from models.pharmacy import Pharmacy
-from models.user import User, UserInfo
+from models.user import PharmacyEmploye, User, UserInfo
 from utils.auth import ACCESS_TOKEN_EXPIRE_MINUTES, decode_access_token, verify_password, create_access_token
 from models.token import Token
 
@@ -38,6 +39,29 @@ async def get_user_info(token: str = Depends(oauth2_scheme)):
         user = await User.find_one(User.email == payload.get("email"))
         if user is None:
             raise credentials_exception
-        return user
+        if "pharmacy" in user.role:
+            connectedUser = await PharmacyEmploye.find_one(PharmacyEmploye.user.id == ObjectId(user.id), fetch_links=True)
+
+            userInfo = {
+                "id": str(user.id),
+                "username": user.username,
+                "email": user.email,
+                "role": user.role,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "pharmacy": {
+                    "id": str(connectedUser.pharmacy.id),
+                    "name": connectedUser.pharmacy.name
+                }
+            }
+            return userInfo
+        return {
+            "id": str(user.id),
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+            "first_name": user.first_name,
+            "last_name": user.last_name
+        }
     except Exception:
         raise credentials_exception

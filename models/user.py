@@ -54,11 +54,13 @@ class UserUpdate(BaseModel):
 
 
 class UserInfo(BaseModel):
+    id: str
     username: str
     email: str
     role: UserRole
     first_name: str
     last_name: str
+    pharmacy: dict = None
 
 
 
